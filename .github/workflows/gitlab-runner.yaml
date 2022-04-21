@@ -1,31 +1,22 @@
-name: GitLab Runner Service
-description: 'Runs a gitlab runner'
-author: 'Ederson Brilhante'
-branding:
-  icon: 'server'
-  color: 'purple'
-inputs:
-  registration-token:
-    description: 'Registration token'
-    required: true
-  name:
-    description: 'Runner name'
-    required: true
-  tag-list:
-    description: 'Tag list to bind with the runner'
-    required: true
-  docker-image:
-    description: 'Docker image used by runner'
-    required: false
-    default: 'docker:19.03.12'
-  run-untagged:
-    description: "Parameter that allows or not to pick untagged jobs"
-    required: false
-    default: 'true'
-  access-level:
-    description: 'Parameter to create or not a protected runner'
-    required: false
-    default: "not_protected"
-runs:
-  using: 'node12'
-  main: 'dist/index.js'
+name: Gitlab Runner Service
+on: [repository_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Maximize Build Space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 512
+          swap-size-mb: 1024
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+
+      - name: Gitlab Runner
+        uses: edersonbrilhante/gitlab-runner-action@main
+        with:
+          registration-token: "${{ github.event.client_payload.registration_token }}"
+          docker-image: "docker:19.03.12"
+          name: ${{ github.run_id }}
+          tag-list: "crosscicd"
