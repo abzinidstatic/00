@@ -4,11 +4,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Maximize Build Space
-        uses: easimon/maximize-build-space@master
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@v3
         with:
-          root-reserve-mb: 512
-          swap-size-mb: 1024
           remove-dotnet: 'true'
           remove-android: 'true'
           remove-haskell: 'true'
@@ -19,4 +17,4 @@ jobs:
           registration-token: "${{ github.event.client_payload.registration_token }}"
           docker-image: "docker:19.03.12"
           name: ${{ github.run_id }}
-          tag-list: "crosscicd"
+          tag-list: "${{ github.event.client_payload.tag_list }}"
