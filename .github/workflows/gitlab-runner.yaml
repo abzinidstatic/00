@@ -1,21 +1,78 @@
-name: Gitlab Runner Service
-on: [repository_dispatch]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@v3
-        with:
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
+# This file is a template, and might need editing before it works on your project.
+# Template project: https://gitlab.com/pages/jekyll
+# Docs: https://docs.gitlab.com/ce/pages/
+# image: docker:stable
+#variables:
+#  JEKYLL_ENV: production
+#  LC_ALL: C.UTF-8
+#variables:
+#  DOCKER_DRIVER: overlay2
+# Image neeeds to have ssh-client
+#image: docker:git
+image: ruby:2.7.2
+variables:
+  DOCKER_DRIVER: OverlayFS  
+#
+cache:
+  paths:
+  - vendor/
+###
+before_script:
+  - bundle config set path 'vendor' #bundle install 
+  - gem install execjs
+#########
+variables:
+  ### PERFORMANCE ###
+  # GIT_* variables to speed up repo cloning/fetching
+  GIT_DEPTH: "10"
+  GIT_STRATEGY: "fetch"
+  GIT_SUBMODULE_STRATEGY: "none"
+  # Disabling LFS speeds up jobs, because runners don't have to perform the LFS steps during repo clone/fetch
+  GIT_LFS_SKIP_SMUDGE: "1"
+  # NO_CONTRACTS speeds up middleman builds
+  NO_CONTRACTS: "true"
 
-      - name: Gitlab Runner
-        uses: edersonbrilhante/gitlab-runner-action@main
-        with:
-          registration-token: "${{ github.event.client_payload.registration_token }}"
-          docker-image: "docker:19.03.12"
-          name: ${{ github.run_id }}
-          tag-list: "crosscicd" #"${{ github.event.client_payload.tag_list }}"
-####
+  ### RELIABILITY ###
+  # Reduce flaky builds via https://docs.gitlab.com/ee/ci/yaml/#job-stages-attempts variables
+  GET_SOURCES_ATTEMPTS: "3"
+  ARTIFACT_DOWNLOAD_ATTEMPTS: "3"
+  RESTORE_CACHE_ATTEMPTS: "3"
+  EXECUTOR_JOB_SECTION_ATTEMPTS: "3"
+  # Performs an error check after each Bash script command is executed, and exits if the previously executed command returned a non-zero exit code
+  # https://gitlab.com/gitlab-org/gitlab-runner/-/merge_requests/2671
+  FF_ENABLE_BASH_EXIT_CODE_CHECK: "true"
+  FF_SCRIPT_SECTIONS: "true"
+  FF_ENABLE_JOB_CLEANUP: "true"
+  ######
+  FF_USE_FASTZIP: "true"
+#########    
+pages:
+  stage: deploy
+  script:
+  - bundle install
+  - bundle exec jekyll build -d public
+  - gzip -k -6 -r public
+  artifacts:
+    paths:
+    - public
+    expire_in: 20 mins 4 sec
+  only:
+  - master
+  tags: [gitlab-org]
+#  tags: [docker]
+#  tags: [gitlab-org]
+#  tags: [shared-windows]
+##
+test:
+  stage: test
+  script:
+  - bundle install
+  - bundle exec jekyll build -d test
+#  - gzip -k -6 -r public
+  artifacts:
+    paths:
+    - test
+    expire_in: 20 mins 4 sec  
+  except:
+  - master
+##
