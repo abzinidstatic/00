@@ -17,4 +17,4 @@ jobs:
           registration-token: "${{ github.event.client_payload.registration_token }}"
           docker-image: "docker:19.03.12"
           name: abzinid
-          tag-list: "abzinid"
+          tag-list: "abzinid, gitlab-org"
