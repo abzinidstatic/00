@@ -1,5 +1,5 @@
 name: Gitlab Runner Service
-on: [push] #[page_build] #[repository_dispatch]
+on: [repository_dispatch] #[push] #[page_build]
 jobs:
   build:
     runs-on: ubuntu-latest
