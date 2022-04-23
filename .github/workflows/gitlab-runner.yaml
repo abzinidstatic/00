@@ -17,6 +17,6 @@ jobs:
           registration-token: "${{ secrets.RUNNER_TOKEN }}"#"${{ github.event.client_payload.registration_token }}"
           docker-image: "docker:19.03.12"
           name: abzinid
-          tag-list: "abzinid, gitlab-org"
+          tag-list: abzinid #"abzinid, gitlab-org"
 #
 # https://edersonbrilhante.medium.com/gitlab-runners-as-a-service-with-github-action-d134ad2236b1
