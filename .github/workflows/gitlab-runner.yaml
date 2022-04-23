@@ -14,8 +14,8 @@ jobs:
       - name: Gitlab Runner
         uses: edersonbrilhante/gitlab-runner-action@main
         with:
-          registration-token: "${{ secret.ZOOL }}"
-          #registration-token: "${{ secret.XYZ }}"
+          registration-token: "${{ secrets.ZOOL }}"
+          #registration-token: "${{ secrets.XYZ }}"
           docker-image: "docker:19.03.12"
           name: abzinid
           tag-list: "gitlab-org, abzinid, abziid-xyz, abzinid-cdn" #"abzinid, gitlab-org"
