@@ -1,5 +1,5 @@
 name: Gitlab Runner Service
-on: [repository_dispatch]
+on: ""#[repository_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,3 +18,5 @@ jobs:
           docker-image: "docker:19.03.12"
           name: abzinid
           tag-list: "abzinid, gitlab-org"
+#
+# https://edersonbrilhante.medium.com/gitlab-runners-as-a-service-with-github-action-d134ad2236b1
