@@ -19,7 +19,7 @@ jobs:
           docker-image: "docker:19.03.12"
           name: abzinid
           tag-list: "gitlab-org, abzinid, abziid-xyz, abzinid-cdn" #"abzinid, gitlab-org"
-##
+###
 # https://edersonbrilhante.medium.com/gitlab-runners-as-a-service-with-github-action-d134ad2236b1
 # update
 #
